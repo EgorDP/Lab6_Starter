@@ -1,10 +1,10 @@
 class RecipeCard extends HTMLElement {
+  shadow;
   constructor() {
-    // Part 1 Expose - TODO
-
-    // You'll want to attach the shadow DOM here
+    super();
+    this.shadow = this.attachShadow({mode: 'open'}); // Create shadow root 
   }
-
+  
   set data(data) {
     // This is the CSS that you'll use for your recipe cards
     const styleElem = document.createElement('style');
@@ -87,19 +87,98 @@ class RecipeCard extends HTMLElement {
 
     // Here's the root element that you'll want to attach all of your other elements to
     const card = document.createElement('article');
+    
 
+   
     // Some functions that will be helpful here:
     //    document.createElement()
     //    document.querySelector()
     //    element.classList.add()
-    //    element.setAttribute()
+    //    element.setAttribute()    (Great for IDs)
     //    element.appendChild()
     //    & All of the helper functions below
 
-    // Make sure to attach your root element and styles to the shadow DOM you
-    // created in the constructor()
 
-    // Part 1 Expose - TODO
+     // Create title 
+     let title = document.createElement("p");
+     title.setAttribute("class", "title");
+     let aTitle = document.createElement("a");
+     aTitle.setAttribute("href", searchForKey(data,'url'));
+     let possibleText = searchForKey(data,'headline');
+     if(possibleText == undefined){
+       possibleText = searchForKey(data,"name");
+     }
+     let aTitleText = document.createTextNode(possibleText);
+     aTitle.appendChild(aTitleText);
+     title.appendChild(aTitle);
+     
+
+    // Create img
+    let image = document.createElement("img");
+    image.setAttribute("src", searchForKey(data,"thumbnailUrl"));
+    image.setAttribute("alt", searchForKey(data,'headline'));
+
+   
+    // Create organization name
+    let organization = document.createElement("p");
+    organization.setAttribute("class", "organization");
+    let orgText = document.createTextNode(searchForKey(data,'name'));
+    organization.appendChild(orgText);
+    
+
+    // Create Rating div
+    let ratingDiv = document.createElement("div");
+    ratingDiv.setAttribute('class', "rating");
+
+    // (Inside Rating Div) - Rating
+    let spanRating = document.createElement("span"); 
+    let spanRatingText;
+    let ratingValue = searchForKey(data,'ratingValue');
+
+    // (Inside Rating Div) - Reviews Amount
+    let spanReviews = document.createElement("span");
+    let spanReviewsText;
+
+    // (Inside Rating Div) - Star amount based on rating
+    let starImage = document.createElement("img");
+    let starType; 
+
+    if(ratingValue == undefined){
+      spanRatingText = document.createTextNode("No Reviews");
+      spanReviewsText = document.createTextNode("");
+    } else {
+      let roundedRating = Math.round((ratingValue * 100)) / 100;
+      spanRatingText = document.createTextNode("" + roundedRating);
+      spanReviewsText = document.createTextNode("(" + searchForKey(data,'ratingCount') + ")");
+      starImage.setAttribute('src','/assets/images/icons/' + Math.round(ratingValue)+ "-star.svg");
+      starImage.setAttribute('alt','' + Math.round(ratingValue));
+    }
+    spanRating.appendChild(spanRatingText);
+    spanReviews.appendChild(spanReviewsText);
+    ratingDiv.appendChild(spanRating);
+    ratingDiv.appendChild(starImage);
+    ratingDiv.appendChild(spanReviews);
+    
+    // Attach time
+    let time = document.createElement("time");
+    let timeText = document.createTextNode(convertTime(searchForKey(data,'totalTime')) );
+    time.appendChild(timeText);
+
+
+    // Attach ingredients
+    let ingredients = document.createElement("p");
+    ingredients.setAttribute("class","ingredients");
+    let ingredientsText = document.createTextNode(createIngredientList(searchForKey(data,'recipeIngredient')) );
+    ingredients.appendChild(ingredientsText);
+
+    card.appendChild(image);
+    card.appendChild(title);
+    card.append(organization);
+    card.append(ratingDiv);
+    card.append(time);
+    card.appendChild(ingredients);
+    this.shadow.appendChild(styleElem);
+    this.shadow.appendChild(card);
   }
 }
 
@@ -173,6 +252,9 @@ function getOrganization(data) {
 function convertTime(time) {
   let timeStr = '';
 
+  if(time == null){
+    return 'Unkown time!';
+  }
   // Remove the 'PT'
   time = time.slice(2);
 
