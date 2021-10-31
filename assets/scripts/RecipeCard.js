@@ -150,7 +150,7 @@ class RecipeCard extends HTMLElement {
       let roundedRating = Math.round((ratingValue * 100)) / 100;
       spanRatingText = document.createTextNode("" + roundedRating);
       spanReviewsText = document.createTextNode("(" + searchForKey(data,'ratingCount') + ")");
-      starImage.setAttribute('src','/assets/images/icons/' + Math.round(ratingValue)+ "-star.svg");
+      starImage.setAttribute('src','assets/images/icons/' + Math.round(ratingValue)+ "-star.svg");
       starImage.setAttribute('alt','' + Math.round(ratingValue));
     }
     spanRating.appendChild(spanRatingText);

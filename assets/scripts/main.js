@@ -54,11 +54,11 @@ async function fetchRecipes() {
       .then(response => response.json())
       .then(data =>   {
         recipeData["dat" + i] = data;
-        // console.log("Fetch #" + (i+1));
+        console.log("Fetch #" + (i+1));
         // console.log(data);
       })
       .catch( (error) => {
-        console.error('El Error:', error);
+      
         reject(false);
       });   
     }
